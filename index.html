@@ -988,6 +988,7 @@ scheduler = torch.optim.lr_scheduler.<span class="fn">CosineAnnealingLR</span>(o
 <script>
 // ─── FILE HANDLING ───────────────────────────────────────────────
 let currentImageBase64 = null;
+let currentMimeType = null;
 
 const uploadZone = document.getElementById('uploadZone');
 const fileInput  = document.getElementById('fileInput');
@@ -1012,6 +1013,7 @@ function loadFile(file) {
   reader.onload = ev => {
     const dataUrl = ev.target.result;
     currentImageBase64 = dataUrl.split(',')[1];
+    currentMimeType = file.type;
     previewImg.src = dataUrl;
     document.getElementById('previewSmallImg').src = dataUrl;
     uploadZone.style.display = 'none';
@@ -1042,67 +1044,43 @@ function showState(state) {
 // ─── ANALYZE ─────────────────────────────────────────────────────
 async function analyzeImage() {
   if (!currentImageBase64) return;
+
   analyzeBtn.disabled = true;
   showState('loading');
 
-  const prompt = `You are an expert radiologist AI. Analyze this X-ray image and provide a structured JSON response with the following fields:
-
-{
-  "fractured": true or false,
-  "confidence": number between 0 and 1,
-  "bone_region": "e.g. Wrist, Forearm, Humerus, Femur, Tibia, Fibula, Spine, Foot, Ankle, Hip, etc.",
-  "bone_sub": "e.g. Distal radius, Ulna shaft, etc.",
-  "fracture_type": "e.g. Transverse, Oblique, Comminuted, Hairline, Greenstick, Spiral, or N/A if no fracture",
-  "fracture_sub": "brief description of fracture type or 'No fracture detected'",
-  "severity": "Mild" or "Moderate" or "Severe" or "None",
-  "severity_scores": { "mild": 0-100, "moderate": 0-100, "severe": 0-100 },
-  "findings": "2-3 sentences describing key radiological observations from the image",
-  "recommendations": ["rec1", "rec2", "rec3"] (3 practical clinical recommendations)
-}
-
-IMPORTANT: Respond ONLY with valid JSON. No extra text. If the image does not appear to be an X-ray, still provide the JSON but note it in findings.`;
-
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: 'image/jpeg',
-                data: currentImageBase64
-              }
-            },
-            { type: 'text', text: prompt }
-          ]
-        }]
-      })
-    });
+    const response = await fetch(
+      'https://osteoscan-ai-api.afshaameer786.workers.dev',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageBase64: currentImageBase64,
+          mimeType: currentMimeType
+        })
+      }
+    );
 
-    const data = await response.json();
-    const rawText = data.content?.find(b => b.type==='text')?.text || '';
-    
-    // Strip any markdown fences
-    const clean = rawText.replace(/```json|```/g, '').trim();
-    const result = JSON.parse(clean);
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'AI analysis failed');
+    }
+
     renderResults(result);
 
-  } catch(err) {
+  } catch (err) {
     const errBox = document.getElementById('errorBox');
-    errBox.textContent = `Analysis failed: ${err.message}. Please check your connection and try again.`;
+    errBox.textContent =
+      `Analysis failed: ${err.message}. Please try again.`;
     showState('error');
+
   } finally {
     analyzeBtn.disabled = false;
   }
 }
-
 // ─── RENDER RESULTS ──────────────────────────────────────────────
 function renderResults(r) {
   // Verdict
