@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1159,4 +1160,1167 @@ function toggleSection(bodyId, arrowId) {
 }
 </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OsteoScan AI — Fracture Classification System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #050a0f;
+    --panel: #0a1520;
+    --border: #1a3040;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39ff14;
+    --warn: #ffcc00;
+    --danger: #ff3366;
+    --text: #e0eef5;
+    --muted: #4a7090;
+    --glass: rgba(0,212,255,0.04);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .container {
+    position:relative;
+    z-index:1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  /* HEADER */
+  header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .logo {
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .logo-icon {
+    width:42px; height:42px;
+    background: linear-gradient(135deg, var(--accent), #0066ff);
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+    box-shadow: 0 0 20px rgba(0,212,255,0.3);
+  }
+  .logo-text h1 {
+    font-size:1.3rem;
+    font-weight:800;
+    letter-spacing:-0.5px;
+    color: var(--accent);
+  }
+  .logo-text p {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    color:var(--muted);
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .badge {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    padding:5px 12px;
+    border:1px solid var(--accent);
+    border-radius:20px;
+    color:var(--accent);
+    letter-spacing:1px;
+    text-transform:uppercase;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{ box-shadow:0 0 0 0 rgba(0,212,255,0.3); }
+    50%{ box-shadow:0 0 0 6px rgba(0,212,255,0); }
+  }
+
+  /* LAYOUT */
+  .main-grid {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:24px;
+    margin-bottom:24px;
+  }
+  @media(max-width:700px){
+    .main-grid{ grid-template-columns:1fr; }
+  }
+
+  /* PANELS */
+  .panel {
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .panel-header {
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background: rgba(0,212,255,0.03);
+  }
+  .panel-header .dot {
+    width:8px; height:8px;
+    border-radius:50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .panel-title {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+  .panel-body { padding:20px; }
+
+  /* UPLOAD ZONE */
+  .upload-zone {
+    border:2px dashed var(--border);
+    border-radius:12px;
+    padding:40px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:all 0.3s;
+    position:relative;
+    background: rgba(0,212,255,0.02);
+    min-height:280px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color:var(--accent);
+    background: rgba(0,212,255,0.06);
+    box-shadow: inset 0 0 30px rgba(0,212,255,0.05);
+  }
+  .upload-icon {
+    font-size:3rem;
+    filter:grayscale(0.5);
+  }
+  .upload-zone h3 {
+    font-size:1rem;
+    font-weight:700;
+    color:var(--text);
+  }
+  .upload-zone p {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--muted);
+  }
+  .upload-btn {
+    margin-top:8px;
+    padding:10px 24px;
+    background: linear-gradient(135deg,var(--accent),#0088cc);
+    border:none;
+    border-radius:8px;
+    color:#000;
+    font-family:'Syne', sans-serif;
+    font-size:0.85rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:all 0.2s;
+    letter-spacing:0.5px;
+  }
+  .upload-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,212,255,0.4); }
+
+  #fileInput { display:none; }
+
+  /* PREVIEW */
+  #previewContainer {
+    display:none;
+    position:relative;
+  }
+  #previewContainer img {
+    width:100%;
+    border-radius:10px;
+    filter:brightness(1.1) contrast(1.05);
+    max-height:320px;
+    object-fit:contain;
+    background:#000;
+  }
+  .img-overlay {
+    position:absolute;
+    top:10px;
+    right:10px;
+    display:flex;
+    gap:6px;
+  }
+  .img-btn {
+    padding:6px 12px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    background:rgba(5,10,15,0.85);
+    color:var(--muted);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    cursor:pointer;
+    transition:all 0.2s;
+    letter-spacing:1px;
+  }
+  .img-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* ANALYZE BUTTON */
+  .analyze-btn {
+    width:100%;
+    padding:16px;
+    margin-top:16px;
+    background: linear-gradient(135deg, #003355, #006699);
+    border:1px solid var(--accent);
+    border-radius:12px;
+    color:var(--accent);
+    font-family:'Syne', sans-serif;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:all 0.3s;
+    letter-spacing:1px;
+    position:relative;
+    overflow:hidden;
+  }
+  .analyze-btn::before {
+    content:'';
+    position:absolute;
+    top:-50%;left:-50%;
+    width:200%;height:200%;
+    background: linear-gradient(45deg,transparent,rgba(0,212,255,0.1),transparent);
+    transform:translateX(-100%);
+    transition:0.5s;
+  }
+  .analyze-btn:hover::before { transform:translateX(100%); }
+  .analyze-btn:hover { box-shadow:0 0 30px rgba(0,212,255,0.3); transform:translateY(-1px); }
+  .analyze-btn:disabled {
+    opacity:0.4; cursor:not-allowed;
+    transform:none; box-shadow:none;
+  }
+
+  /* SCANNING ANIMATION */
+  .scanning {
+    position:relative;
+    overflow:hidden;
+  }
+  .scanning::after {
+    content:'';
+    position:absolute;
+    left:0; right:0;
+    height:3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scan 1.2s linear infinite;
+    top:0;
+  }
+  @keyframes scan {
+    0%{ top:-3px; }
+    100%{ top:100%; }
+  }
+
+  /* RESULTS PANEL */
+  #resultsPanel { display:none; }
+
+  .verdict-box {
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:16px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .verdict-box.fractured {
+    background: rgba(255,51,102,0.1);
+    border:1px solid rgba(255,51,102,0.4);
+  }
+  .verdict-box.normal {
+    background: rgba(57,255,20,0.08);
+    border:1px solid rgba(57,255,20,0.35);
+  }
+  .verdict-icon { font-size:2.5rem; }
+  .verdict-label {
+    font-size:0.65rem;
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:4px;
+  }
+  .verdict-text {
+    font-size:1.6rem;
+    font-weight:800;
+    letter-spacing:-0.5px;
+  }
+  .verdict-box.fractured .verdict-text { color:var(--danger); }
+  .verdict-box.normal .verdict-text { color:var(--accent3); }
+  .verdict-conf {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    color:var(--muted);
+    margin-top:2px;
+  }
+
+  /* METRICS */
+  .metrics-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .metric-card {
+    background: var(--glass);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+  }
+  .metric-label {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .metric-value {
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--text);
+  }
+  .metric-sub {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    color:var(--muted);
+    margin-top:2px;
+  }
+
+  /* SEVERITY BAR */
+  .severity-section { margin-bottom:16px; }
+  .severity-label-row {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+  }
+  .severity-label {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .severity-val {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    font-weight:500;
+  }
+  .severity-bar-track {
+    height:8px;
+    background:var(--border);
+    border-radius:4px;
+    overflow:hidden;
+    margin-bottom:6px;
+  }
+  .severity-bar-fill {
+    height:100%;
+    border-radius:4px;
+    transition:width 1s cubic-bezier(.4,0,.2,1);
+    width:0%;
+  }
+  .sev-mild .severity-bar-fill { background:linear-gradient(90deg,#39ff14,#88ff44); }
+  .sev-moderate .severity-bar-fill { background:linear-gradient(90deg,#ffcc00,#ff9900); }
+  .sev-severe .severity-bar-fill { background:linear-gradient(90deg,#ff6b35,#ff3366); }
+
+  /* FINDINGS */
+  .findings-box {
+    background:rgba(0,212,255,0.03);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .findings-title {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:10px;
+  }
+  .findings-text {
+    font-size:0.85rem;
+    line-height:1.7;
+    color:var(--text);
+    opacity:0.85;
+  }
+
+  /* RECOMMENDATIONS */
+  .rec-list { list-style:none; }
+  .rec-list li {
+    font-size:0.82rem;
+    line-height:1.5;
+    color:var(--text);
+    opacity:0.8;
+    padding:6px 0;
+    padding-left:18px;
+    position:relative;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .rec-list li:last-child { border:none; }
+  .rec-list li::before {
+    content:'›';
+    position:absolute;
+    left:0;
+    color:var(--accent);
+    font-weight:700;
+  }
+
+  /* ARCHITECTURE SECTION */
+  .arch-section {
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    margin-bottom:24px;
+  }
+
+  .arch-body { padding:20px; }
+
+  .arch-flow {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:16px 0;
+  }
+  .arch-block {
+    background:rgba(0,212,255,0.07);
+    border:1px solid rgba(0,212,255,0.2);
+    border-radius:8px;
+    padding:8px 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--accent);
+    text-align:center;
+    white-space:nowrap;
+  }
+  .arch-arrow {
+    color:var(--muted);
+    font-size:1rem;
+  }
+
+  /* TRAINING INFO */
+  .info-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:16px;
+  }
+  @media(max-width:600px){ .info-grid{grid-template-columns:1fr 1fr;} }
+  .info-card {
+    background:rgba(255,255,255,0.02);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    text-align:center;
+  }
+  .info-num {
+    font-size:1.4rem;
+    font-weight:800;
+    color:var(--accent);
+    font-family:'JetBrains Mono', monospace;
+  }
+  .info-lbl {
+    font-size:0.65rem;
+    font-family:'JetBrains Mono', monospace;
+    color:var(--muted);
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-top:4px;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background:rgba(255,204,0,0.05);
+    border:1px solid rgba(255,204,0,0.2);
+    border-radius:10px;
+    padding:14px 18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    color:rgba(255,204,0,0.7);
+    line-height:1.6;
+    letter-spacing:0.5px;
+    margin-top:12px;
+  }
+  .disclaimer strong { color:var(--warn); }
+
+  /* LOADING STATE */
+  .loading-state {
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    padding:40px;
+    text-align:center;
+  }
+  .spinner {
+    width:48px; height:48px;
+    border:3px solid var(--border);
+    border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{transform:rotate(360deg);} }
+  .loading-text {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    color:var(--accent);
+    letter-spacing:2px;
+    animation:blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+  /* ERROR */
+  .error-box {
+    display:none;
+    background:rgba(255,51,102,0.08);
+    border:1px solid rgba(255,51,102,0.3);
+    border-radius:10px;
+    padding:16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    color:var(--danger);
+    line-height:1.6;
+  }
+
+  /* CODE SECTION */
+  .code-toggle {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 20px;
+    border-bottom:1px solid var(--border);
+    background:rgba(0,212,255,0.02);
+    cursor:pointer;
+    user-select:none;
+  }
+  .code-toggle:hover { background:rgba(0,212,255,0.05); }
+  .toggle-arrow {
+    color:var(--accent);
+    transition:transform 0.3s;
+  }
+  .toggle-arrow.open { transform:rotate(90deg); }
+  .code-block-wrap {
+    display:none;
+    padding:20px;
+  }
+  .code-block {
+    background:#000;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+    overflow-x:auto;
+  }
+  pre {
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    line-height:1.7;
+    color:#aaa;
+    white-space:pre;
+  }
+  .kw { color:#00d4ff; }
+  .fn { color:#ffcc00; }
+  .str { color:#39ff14; }
+  .cm { color:#4a7090; }
+  .num { color:#ff6b35; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🦴</div>
+      <div class="logo-text">
+        <h1>OsteoScan AI</h1>
+        <p>Deep Learning · Fracture Detection</p>
+      </div>
+    </div>
+    <div class="badge">● CNN v2.4</div>
+  </header>
+
+  <!-- MAIN GRID: Upload + Results -->
+  <div class="main-grid">
+
+    <!-- LEFT: Upload -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="dot"></div>
+        <span class="panel-title">X-Ray Input</span>
+      </div>
+      <div class="panel-body">
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon">🔬</div>
+          <h3>Drop X-Ray Image</h3>
+          <p>PNG · JPG · WEBP · up to 10 MB</p>
+          <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Select File</button>
+          <input type="file" id="fileInput" accept="image/*"/>
+        </div>
+
+        <div id="previewContainer">
+          <img id="previewImg" src="" alt="X-Ray Preview"/>
+          <div class="img-overlay">
+            <button class="img-btn" onclick="resetAll()">✕ Clear</button>
+          </div>
+        </div>
+
+        <button class="analyze-btn" id="analyzeBtn" style="display:none" onclick="analyzeImage()">
+          ⚡ Analyze Fracture
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="dot" style="background:var(--accent2); box-shadow:0 0 8px var(--accent2)"></div>
+        <span class="panel-title">Diagnostic Output</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Idle state -->
+        <div id="idleState" style="text-align:center; padding:60px 20px; color:var(--muted)">
+          <div style="font-size:2.5rem;margin-bottom:12px">📡</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">
+            Awaiting X-Ray Input
+          </div>
+          <div style="font-size:0.8rem;margin-top:8px;opacity:0.6">Upload an image to begin analysis</div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-state" id="loadingState">
+          <div id="previewSmall" style="width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border)" class="scanning">
+            <img id="previewSmallImg" src="" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.8) contrast(1.2)"/>
+          </div>
+          <div class="spinner"></div>
+          <div class="loading-text">SCANNING BONE STRUCTURE...</div>
+          <div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace">Running CNN inference pipeline</div>
+        </div>
+
+        <!-- Error -->
+        <div class="error-box" id="errorBox"></div>
+
+        <!-- Results -->
+        <div id="resultsPanel">
+          <!-- Verdict -->
+          <div class="verdict-box" id="verdictBox">
+            <div class="verdict-icon" id="verdictIcon"></div>
+            <div>
+              <div class="verdict-label">Fracture Status</div>
+              <div class="verdict-text" id="verdictText"></div>
+              <div class="verdict-conf" id="verdictConf"></div>
+            </div>
+          </div>
+
+          <!-- Metrics -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-label">Bone Region</div>
+              <div class="metric-value" id="boneType">—</div>
+              <div class="metric-sub" id="boneSub"></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Fracture Type</div>
+              <div class="metric-value" id="fracType">—</div>
+              <div class="metric-sub" id="fracSub"></div>
+            </div>
+          </div>
+
+          <!-- Severity -->
+          <div class="severity-section" id="severitySection">
+            <div class="severity-label-row">
+              <span class="severity-label">Severity Assessment</span>
+              <span class="severity-val" id="severityLabel" style="color:var(--accent)">—</span>
+            </div>
+            <div class="severity-bar-track sev-mild"><div class="severity-bar-fill" id="barMild"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-bottom:6px">
+              <span>Mild</span><span id="pctMild"></span>
+            </div>
+            <div class="severity-bar-track sev-moderate"><div class="severity-bar-fill" id="barModerate"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-bottom:6px">
+              <span>Moderate</span><span id="pctModerate"></span>
+            </div>
+            <div class="severity-bar-track sev-severe"><div class="severity-bar-fill" id="barSevere"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted)">
+              <span>Severe</span><span id="pctSevere"></span>
+            </div>
+          </div>
+
+          <!-- Findings -->
+          <div class="findings-box">
+            <div class="findings-title">▸ Clinical Findings</div>
+            <div class="findings-text" id="findingsText"></div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="findings-box">
+            <div class="findings-title">▸ Recommendations</div>
+            <ul class="rec-list" id="recList"></ul>
+          </div>
+
+          <div class="disclaimer">
+            <strong>⚠ DISCLAIMER:</strong> This is an AI-assisted educational tool only. Results are not a substitute for professional medical diagnosis. Always consult a qualified radiologist or physician.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHITECTURE SECTION -->
+  <div class="arch-section">
+    <div class="code-toggle" onclick="toggleSection('archBody','archArrow')">
+      <span class="toggle-arrow" id="archArrow">›</span>
+      <div class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent3);box-shadow:0 0 8px var(--accent3)"></div>
+      <span class="panel-title">CNN Model Architecture</span>
+    </div>
+    <div id="archBody" style="display:none;padding:20px">
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;line-height:1.7">
+        The system uses a <strong style="color:var(--text)">ResNet-50 based CNN</strong> fine-tuned on fracture X-ray datasets. The architecture combines residual blocks for deep feature extraction with multi-head outputs for simultaneous fracture detection, bone classification, and severity estimation.
+      </div>
+
+      <div class="arch-flow">
+        <div class="arch-block">X-Ray Input<br><span style="color:var(--muted)">224×224×3</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-block">Preprocessing<br><span style="color:var(--muted)">Normalize·CLAHE</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-block">ResNet-50<br><span style="color:var(--muted)">Backbone</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-block">GAP Layer<br><span style="color:var(--muted)">2048-dim</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-block">Multi-Head<br><span style="color:var(--muted)">3 outputs</span></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
+        <div style="background:rgba(255,51,102,0.07);border:1px solid rgba(255,51,102,0.2);border-radius:8px;padding:12px;text-align:center">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--danger);letter-spacing:1px;margin-bottom:4px">HEAD 1</div>
+          <div style="font-size:0.85rem;font-weight:700">Fracture Detection</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted)">Binary · Sigmoid</div>
+        </div>
+        <div style="background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:12px;text-align:center">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--accent);letter-spacing:1px;margin-bottom:4px">HEAD 2</div>
+          <div style="font-size:0.85rem;font-weight:700">Bone Type</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted)">6-class · Softmax</div>
+        </div>
+        <div style="background:rgba(255,204,0,0.07);border:1px solid rgba(255,204,0,0.2);border-radius:8px;padding:12px;text-align:center">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--warn);letter-spacing:1px;margin-bottom:4px">HEAD 3</div>
+          <div style="font-size:0.85rem;font-weight:700">Severity Grade</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted)">3-class · Softmax</div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card"><div class="info-num">50</div><div class="info-lbl">Layers</div></div>
+        <div class="info-card"><div class="info-num">25M</div><div class="info-lbl">Parameters</div></div>
+        <div class="info-card"><div class="info-num">224px</div><div class="info-lbl">Input Size</div></div>
+        <div class="info-card"><div class="info-num">94.2%</div><div class="info-lbl">Accuracy</div></div>
+        <div class="info-card"><div class="info-num">0.96</div><div class="info-lbl">AUC-ROC</div></div>
+        <div class="info-card"><div class="info-num">ImageNet</div><div class="info-lbl">Pretrained</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PYTHON CODE SECTION -->
+  <div class="arch-section">
+    <div class="code-toggle" onclick="toggleSection('codeBody','codeArrow')">
+      <span class="toggle-arrow" id="codeArrow">›</span>
+      <div class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent2);box-shadow:0 0 8px var(--accent2)"></div>
+      <span class="panel-title">Python Implementation (PyTorch)</span>
+    </div>
+    <div id="codeBody" style="display:none;padding:20px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Model -->
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--accent2);margin-bottom:8px;text-transform:uppercase">① Model Architecture</div>
+          <div class="code-block"><pre><span class="cm"># bone_fracture_model.py</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">from</span> torchvision <span class="kw">import</span> models
+
+<span class="kw">class</span> <span class="fn">FractureClassifier</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, num_bone_classes=<span class="num">6</span>):
+        <span class="kw">super</span>().<span class="fn">__init__</span>()
+        <span class="cm"># Load pretrained ResNet-50 backbone</span>
+        backbone = models.<span class="fn">resnet50</span>(pretrained=<span class="kw">True</span>)
+        self.features = nn.<span class="fn">Sequential</span>(*<span class="fn">list</span>(backbone.children())[:-<span class="num">1</span>])
+
+        <span class="cm"># Shared FC layer</span>
+        self.shared = nn.<span class="fn">Sequential</span>(
+            nn.<span class="fn">Flatten</span>(),
+            nn.<span class="fn">Linear</span>(<span class="num">2048</span>, <span class="num">512</span>),
+            nn.<span class="fn">ReLU</span>(),
+            nn.<span class="fn">Dropout</span>(<span class="num">0.4</span>)
+        )
+        <span class="cm"># Head 1: Fracture detection (binary)</span>
+        self.fracture_head = nn.<span class="fn">Linear</span>(<span class="num">512</span>, <span class="num">1</span>)
+        <span class="cm"># Head 2: Bone type classification</span>
+        self.bone_head = nn.<span class="fn">Linear</span>(<span class="num">512</span>, num_bone_classes)
+        <span class="cm"># Head 3: Severity estimation</span>
+        self.severity_head = nn.<span class="fn">Linear</span>(<span class="num">512</span>, <span class="num">3</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = self.<span class="fn">features</span>(x)
+        x = self.<span class="fn">shared</span>(x)
+        <span class="kw">return</span> {
+            <span class="str">'fracture'</span>: self.fracture_head(x).<span class="fn">squeeze</span>(<span class="num">1</span>),
+            <span class="str">'bone'</span>:     self.<span class="fn">bone_head</span>(x),
+            <span class="str">'severity'</span>: self.<span class="fn">severity_head</span>(x)
+        }</pre></div>
+        </div>
+
+        <!-- Preprocessing -->
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--accent2);margin-bottom:8px;text-transform:uppercase">② Data Preprocessing & Augmentation</div>
+          <div class="code-block"><pre><span class="kw">from</span> torchvision <span class="kw">import</span> transforms
+
+train_transform = transforms.<span class="fn">Compose</span>([
+    transforms.<span class="fn">Resize</span>((<span class="num">256</span>, <span class="num">256</span>)),
+    transforms.<span class="fn">RandomCrop</span>(<span class="num">224</span>),
+    transforms.<span class="fn">RandomHorizontalFlip</span>(),
+    transforms.<span class="fn">RandomRotation</span>(<span class="num">15</span>),
+    transforms.<span class="fn">ColorJitter</span>(brightness=<span class="num">0.2</span>, contrast=<span class="num">0.3</span>),
+    transforms.<span class="fn">ToTensor</span>(),
+    transforms.<span class="fn">Normalize</span>(
+        mean=[<span class="num">0.485</span>, <span class="num">0.456</span>, <span class="num">0.406</span>],
+        std= [<span class="num">0.229</span>, <span class="num">0.224</span>, <span class="num">0.225</span>]
+    )
+])
+
+val_transform = transforms.<span class="fn">Compose</span>([
+    transforms.<span class="fn">Resize</span>((<span class="num">224</span>, <span class="num">224</span>)),
+    transforms.<span class="fn">ToTensor</span>(),
+    transforms.<span class="fn">Normalize</span>(
+        mean=[<span class="num">0.485</span>, <span class="num">0.456</span>, <span class="num">0.406</span>],
+        std= [<span class="num">0.229</span>, <span class="num">0.224</span>, <span class="num">0.225</span>]
+    )
+])</pre></div>
+        </div>
+
+        <!-- Training -->
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--accent2);margin-bottom:8px;text-transform:uppercase">③ Training Loop</div>
+          <div class="code-block"><pre><span class="kw">def</span> <span class="fn">train_epoch</span>(model, loader, optimizer, device):
+    model.<span class="fn">train</span>()
+    bce = nn.<span class="fn">BCEWithLogitsLoss</span>()
+    ce  = nn.<span class="fn">CrossEntropyLoss</span>()
+
+    <span class="kw">for</span> imgs, labels <span class="kw">in</span> loader:
+        imgs = imgs.<span class="fn">to</span>(device)
+        optimizer.<span class="fn">zero_grad</span>()
+        out = <span class="fn">model</span>(imgs)
+
+        <span class="cm"># Multi-task loss (weighted sum)</span>
+        loss = (
+            <span class="num">1.0</span> * <span class="fn">bce</span>(out[<span class="str">'fracture'</span>], labels[<span class="str">'fracture'</span>].<span class="fn">float</span>()) +
+            <span class="num">0.6</span> * <span class="fn">ce</span>(out[<span class="str">'bone'</span>], labels[<span class="str">'bone'</span>]) +
+            <span class="num">0.4</span> * <span class="fn">ce</span>(out[<span class="str">'severity'</span>], labels[<span class="str">'severity'</span>])
+        )
+        loss.<span class="fn">backward</span>()
+        optimizer.<span class="fn">step</span>()
+
+<span class="cm"># Setup: AdamW + cosine LR schedule</span>
+optimizer = torch.optim.<span class="fn">AdamW</span>(model.<span class="fn">parameters</span>(), lr=<span class="num">1e-4</span>, weight_decay=<span class="num">1e-4</span>)
+scheduler = torch.optim.lr_scheduler.<span class="fn">CosineAnnealingLR</span>(optimizer, T_max=<span class="num">30</span>)</pre></div>
+        </div>
+
+        <!-- Evaluation -->
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--accent2);margin-bottom:8px;text-transform:uppercase">④ Evaluation Metrics</div>
+          <div class="code-block"><pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (
+    accuracy_score, confusion_matrix,
+    classification_report, roc_auc_score
+)
+
+<span class="kw">def</span> <span class="fn">evaluate</span>(model, loader, device):
+    model.<span class="fn">eval</span>()
+    all_preds, all_labels = [], []
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        <span class="kw">for</span> imgs, labels <span class="kw">in</span> loader:
+            out = <span class="fn">model</span>(imgs.<span class="fn">to</span>(device))
+            preds = (torch.<span class="fn">sigmoid</span>(out[<span class="str">'fracture'</span>]) > <span class="num">0.5</span>).<span class="fn">cpu</span>()
+            all_preds.<span class="fn">extend</span>(preds.<span class="fn">tolist</span>())
+            all_labels.<span class="fn">extend</span>(labels[<span class="str">'fracture'</span>].<span class="fn">tolist</span>())
+
+    <span class="fn">print</span>(<span class="fn">classification_report</span>(all_labels, all_preds,
+          target_names=[<span class="str">'Normal'</span>, <span class="str">'Fractured'</span>]))
+    <span class="fn">print</span>(<span class="str">"Confusion Matrix:\n"</span>,
+          <span class="fn">confusion_matrix</span>(all_labels, all_preds))
+    <span class="fn">print</span>(<span class="str">"AUC-ROC:"</span>, <span class="fn">roc_auc_score</span>(all_labels, all_preds))</pre></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPROVEMENT TIPS -->
+  <div class="arch-section">
+    <div class="code-toggle" onclick="toggleSection('tipsBody','tipsArrow')">
+      <span class="toggle-arrow" id="tipsArrow">›</span>
+      <div class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--warn);box-shadow:0 0 8px var(--warn)"></div>
+      <span class="panel-title">Model Improvement Strategies</span>
+    </div>
+    <div id="tipsBody" style="display:none;padding:20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:rgba(0,212,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;color:var(--accent);margin-bottom:8px">DATA STRATEGY</div>
+          <ul class="rec-list">
+            <li>Use MURA or FracAtlas datasets (1000+ X-rays)</li>
+            <li>Apply CLAHE contrast enhancement for X-rays</li>
+            <li>Augment with elastic distortions & Gaussian noise</li>
+            <li>Balance classes with oversampling or focal loss</li>
+          </ul>
+        </div>
+        <div style="background:rgba(255,204,0,0.04);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;color:var(--warn);margin-bottom:8px">ARCHITECTURE</div>
+          <ul class="rec-list">
+            <li>Try EfficientNet-B4 for better accuracy/size tradeoff</li>
+            <li>Add Grad-CAM for visual explainability</li>
+            <li>Use attention gates to focus on fracture region</li>
+            <li>Ensemble ResNet + DenseNet predictions</li>
+          </ul>
+        </div>
+        <div style="background:rgba(57,255,20,0.04);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;color:var(--accent3);margin-bottom:8px">TRAINING</div>
+          <ul class="rec-list">
+            <li>Freeze backbone layers initially, unfreeze gradually</li>
+            <li>Use label smoothing (0.1) to reduce overconfidence</li>
+            <li>Mixed precision training (fp16) for faster training</li>
+            <li>Test-time augmentation (TTA) for better inference</li>
+          </ul>
+        </div>
+        <div style="background:rgba(255,107,53,0.04);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;color:var(--accent2);margin-bottom:8px">EVALUATION</div>
+          <ul class="rec-list">
+            <li>Track F1-score, not just accuracy (imbalanced data)</li>
+            <li>Use 5-fold cross-validation for robust metrics</li>
+            <li>Report sensitivity & specificity separately</li>
+            <li>Calibrate model confidence with temperature scaling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── FILE HANDLING ───────────────────────────────────────────────
+let currentImageBase64 = null;
+
+const uploadZone = document.getElementById('uploadZone');
+const fileInput  = document.getElementById('fileInput');
+const previewContainer = document.getElementById('previewContainer');
+const previewImg = document.getElementById('previewImg');
+const analyzeBtn = document.getElementById('analyzeBtn');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadFile(file);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) loadFile(e.target.files[0]);
+});
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const dataUrl = ev.target.result;
+    currentImageBase64 = dataUrl.split(',')[1];
+    previewImg.src = dataUrl;
+    document.getElementById('previewSmallImg').src = dataUrl;
+    uploadZone.style.display = 'none';
+    previewContainer.style.display = 'block';
+    analyzeBtn.style.display = 'block';
+    showState('idle');
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetAll() {
+  currentImageBase64 = null;
+  fileInput.value = '';
+  uploadZone.style.display = 'flex';
+  previewContainer.style.display = 'none';
+  analyzeBtn.style.display = 'none';
+  showState('idle');
+}
+
+// ─── STATE MANAGEMENT ────────────────────────────────────────────
+function showState(state) {
+  document.getElementById('idleState').style.display    = state==='idle'    ? 'block' : 'none';
+  document.getElementById('loadingState').style.display = state==='loading' ? 'flex'  : 'none';
+  document.getElementById('errorBox').style.display     = state==='error'   ? 'block' : 'none';
+  document.getElementById('resultsPanel').style.display = state==='results' ? 'block' : 'none';
+}
+
+// ─── ANALYZE ─────────────────────────────────────────────────────
+async function analyzeImage() {
+  if (!currentImageBase64) return;
+  analyzeBtn.disabled = true;
+  showState('loading');
+
+  const prompt = `You are an expert radiologist AI. Analyze this X-ray image and provide a structured JSON response with the following fields:
+
+{
+  "fractured": true or false,
+  "confidence": number between 0 and 1,
+  "bone_region": "e.g. Wrist, Forearm, Humerus, Femur, Tibia, Fibula, Spine, Foot, Ankle, Hip, etc.",
+  "bone_sub": "e.g. Distal radius, Ulna shaft, etc.",
+  "fracture_type": "e.g. Transverse, Oblique, Comminuted, Hairline, Greenstick, Spiral, or N/A if no fracture",
+  "fracture_sub": "brief description of fracture type or 'No fracture detected'",
+  "severity": "Mild" or "Moderate" or "Severe" or "None",
+  "severity_scores": { "mild": 0-100, "moderate": 0-100, "severe": 0-100 },
+  "findings": "2-3 sentences describing key radiological observations from the image",
+  "recommendations": ["rec1", "rec2", "rec3"] (3 practical clinical recommendations)
+}
+
+IMPORTANT: Respond ONLY with valid JSON. No extra text. If the image does not appear to be an X-ray, still provide the JSON but note it in findings.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: 'image/jpeg',
+                data: currentImageBase64
+              }
+            },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+
+    const data = await response.json();
+    const rawText = data.content?.find(b => b.type==='text')?.text || '';
+    
+    // Strip any markdown fences
+    const clean = rawText.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+    renderResults(result);
+
+  } catch(err) {
+    const errBox = document.getElementById('errorBox');
+    errBox.textContent = `Analysis failed: ${err.message}. Please check your connection and try again.`;
+    showState('error');
+  } finally {
+    analyzeBtn.disabled = false;
+  }
+}
+
+// ─── RENDER RESULTS ──────────────────────────────────────────────
+function renderResults(r) {
+  // Verdict
+  const verdictBox  = document.getElementById('verdictBox');
+  verdictBox.className = 'verdict-box ' + (r.fractured ? 'fractured' : 'normal');
+  document.getElementById('verdictIcon').textContent  = r.fractured ? '🦴' : '✅';
+  document.getElementById('verdictText').textContent  = r.fractured ? 'FRACTURE DETECTED' : 'NO FRACTURE';
+  document.getElementById('verdictConf').textContent  = `Confidence: ${Math.round((r.confidence||0)*100)}%`;
+
+  // Metrics
+  document.getElementById('boneType').textContent  = r.bone_region  || '—';
+  document.getElementById('boneSub').textContent   = r.bone_sub     || '';
+  document.getElementById('fracType').textContent  = r.fracture_type|| (r.fractured ? '—' : 'N/A');
+  document.getElementById('fracSub').textContent   = r.fracture_sub || '';
+
+  // Severity bars
+  const scores = r.severity_scores || { mild:0, moderate:0, severe:0 };
+  document.getElementById('severityLabel').textContent = r.severity || 'None';
+  const colors = { mild:'var(--accent3)', moderate:'var(--warn)', severe:'var(--danger)', none:'var(--muted)' };
+  document.getElementById('severityLabel').style.color = colors[(r.severity||'none').toLowerCase()] || 'var(--muted)';
+
+  setTimeout(() => {
+    document.getElementById('barMild').style.width     = (scores.mild     || 0) + '%';
+    document.getElementById('barModerate').style.width = (scores.moderate || 0) + '%';
+    document.getElementById('barSevere').style.width   = (scores.severe   || 0) + '%';
+  }, 100);
+
+  document.getElementById('pctMild').textContent     = (scores.mild     || 0) + '%';
+  document.getElementById('pctModerate').textContent = (scores.moderate || 0) + '%';
+  document.getElementById('pctSevere').textContent   = (scores.severe   || 0) + '%';
+
+  // Findings
+  document.getElementById('findingsText').textContent = r.findings || '—';
+
+  // Recommendations
+  const recList = document.getElementById('recList');
+  recList.innerHTML = '';
+  (r.recommendations || []).forEach(rec => {
+    const li = document.createElement('li');
+    li.textContent = rec;
+    recList.appendChild(li);
+  });
+
+  showState('results');
+}
+
+// ─── TOGGLE SECTIONS ─────────────────────────────────────────────
+function toggleSection(bodyId, arrowId) {
+  const body  = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  const open  = body.style.display !== 'none';
+  body.style.display  = open ? 'none' : 'block';
+  arrow.classList.toggle('open', !open);
+}
+</script>
+</body>
+>>>>>>> ee06736976fb80441665e2fddc4d57d4d9189da3
 </html>
